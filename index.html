@@ -802,28 +802,25 @@
                     sendBtn.disabled = true;
                     sendBtn.textContent = 'Sending...';
                     
-                    const imageData = canvas.toDataURL().split(',')[1];
+                    // Convert canvas to blob
+                    const blob = await new Promise(resolve => {
+                        canvas.toBlob(resolve, 'image/png');
+                    });
+                    
+                    // Create FormData and append the image
+                    const formData = new FormData();
+                    formData.append('file', blob, 'drawing.png');
+                    formData.append('payload_json', JSON.stringify({
+                        content: 'New drawing received!',
+                        attachments: [{
+                            id: 0,
+                            filename: 'drawing.png'
+                        }]
+                    }));
                     
                     const response = await fetch(webhookUrl, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            content: 'New drawing received!',
-                            embeds: [{
-                                image: {
-                                    url: 'attachment://drawing.png'
-                                }
-                            }],
-                            attachments: [{
-                                id: 0,
-                                description: 'Drawing',
-                                filename: 'drawing.png',
-                                content_type: 'image/png',
-                                data: imageData
-                            }]
-                        })
+                        body: formData
                     });
 
                     if (response.ok) {
