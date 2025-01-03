@@ -689,34 +689,42 @@
                 saveCanvasState();
             }
 
-            function draw(e) {
-                if (!isDrawing) return;
-                isDrawingAction = true;
-                
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            function draw(event) {
+    if (!isDrawing) return;
 
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                [lastX, lastY] = [x, y];
-            }
+    const { x, y } = getEventCoordinates(event, canvas);
 
-            function startDrawing(e) {
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
-                
-                if (currentTool === 'fill') {
-                    floodFill(x, y, colorPicker.value);
-                    return;
-                }
+    isDrawingAction = true;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+}
+function getEventCoordinates(event, canvas) {
+    const rect = canvas.getBoundingClientRect();
 
-                isDrawing = true;
-                [lastX, lastY] = [x, y];
-            }
+    // Use touch coordinates for touch events, mouse coordinates otherwise
+    const x = event.touches ? event.touches[0].clientX : event.clientX;
+    const y = event.touches ? event.touches[0].clientY : event.clientY;
+
+    return {
+        x: x - rect.left,
+        y: y - rect.top
+    };
+}
+
+            function startDrawing(event) {
+    const { x, y } = getEventCoordinates(event, canvas);
+
+    if (currentTool === 'fill') {
+        floodFill(x, y, colorPicker.value);
+        return;
+    }
+
+    isDrawing = true;
+    [lastX, lastY] = [x, y];
+}
 
             // Mouse Events
             canvas.addEventListener('mousedown', startDrawing);
@@ -795,51 +803,78 @@
             });
 
             sendBtn.addEventListener('click', async () => {
-                // Art Webhook
-                const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
-                
-                try {
-                    sendBtn.disabled = true;
-                    sendBtn.textContent = 'Sending...';
-                    
-                    // Convert canvas to blob
-                    const blob = await new Promise(resolve => {
-                        canvas.toBlob(resolve, 'image/png');
-                    });
-                    
-                    // Create FormData and append the image
-                    const formData = new FormData();
-                    formData.append('file', blob, 'drawing.png');
-                    formData.append('payload_json', JSON.stringify({
-                        content: 'New drawing received!',
-                        attachments: [{
-                            id: 0,
-                            filename: 'drawing.png'
-                        }]
-                    }));
-                    
-                    const response = await fetch(webhookUrl, {
-                        method: 'POST',
-                        body: formData
-                    });
+    const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
 
-                    if (response.ok) {
-                        sendBtn.textContent = 'Sent!';
-                        setTimeout(() => {
-                            sendBtn.disabled = false;
-                            sendBtn.textContent = 'Send to Kelo';
-                        }, 2000);
-                    } else {
-                        throw new Error('Failed to send');
-                    }
-                } catch (error) {
-                    sendBtn.textContent = 'Failed to send';
-                    setTimeout(() => {
-                        sendBtn.disabled = false;
-                        sendBtn.textContent = 'Send to Kelo';
-                    }, 2000);
-                }
-            });
+    try {
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Sending...';
+
+        // Convert canvas to blob
+        const blob = await new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/png');
+        });
+
+        // Debug: Check if the blob is created
+        if (!blob) {
+            console.error('Blob conversion failed');
+            sendBtn.textContent = 'Failed to send (Blob error)';
+            setTimeout(() => {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send to Kelo';
+            }, 2000);
+            return;
+        }
+        console.log('Blob successfully created:', blob);
+
+        // Create FormData and append the image
+        const formData = new FormData();
+        formData.append('file', blob, 'drawing.png');
+
+        // Optional payload_json
+        formData.append('payload_json', JSON.stringify({
+            content: 'New drawing received!'
+        }));
+
+        // Debug: Log FormData content
+        console.log('FormData:', Array.from(formData.entries()));
+
+        // Send the request
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        // Debug: Check response status
+        if (!response.ok) {
+            console.error(`HTTP error: ${response.status} - ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('Response text:', errorText);
+
+            sendBtn.textContent = 'Failed to send';
+            setTimeout(() => {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send to Kelo';
+            }, 2000);
+            return;
+        }
+
+        // Success
+        console.log('Drawing successfully sent:', response);
+        sendBtn.textContent = 'Sent!';
+        setTimeout(() => {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send to Kelo';
+        }, 2000);
+    } catch (error) {
+        console.error('Error sending drawing:', error);
+        sendBtn.textContent = 'Failed to send';
+        setTimeout(() => {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send to Kelo';
+        }, 2000);
+    }
+});
+
 
             // Initialize drawing settings
             ctx.strokeStyle = colorPicker.value;
