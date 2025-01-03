@@ -328,6 +328,119 @@
                 padding: 20px;
             }
         }
+		
+		/* Drawing Canvas Styles */
+.drawing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#drawingCanvas {
+    border: 3px solid var(--color-border);
+    background-color: white;
+    border-radius: 8px;
+    cursor: crosshair;
+}
+
+.drawing-controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.control-btn {
+    padding: 8px 16px;
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    background-color: var(--color-border);
+}
+
+#colorPicker {
+    width: 50px;
+    height: 40px;
+    padding: 0;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#brushSize {
+    width: 100px;
+}
+
+@media (max-width: 768px) {
+    #drawingCanvas {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .drawing-controls {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.tool-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.control-select {
+    padding: 8px;
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.button-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#sendBtn {
+    background-color: #9F86C0;
+    font-weight: bold;
+}
+
+#sendBtn:hover {
+    background-color: #BE95C4;
+}
+
+.icon-btn {
+    color: var(--color-text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    transition: transform 0.2s ease;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+.icon-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
     </style>
 </head>
 <body>
@@ -421,13 +534,32 @@
                 `
             },
             {
-                id: 'tab-4',
-                title: 'Video Games',
-                content: `
-                    <h1>WIP</h1>
-                    <p>WIP</p>
-                `
-            },
+    id: 'tab-4',
+    title: 'Draw Stuff!',
+    content: `
+        <h1 style="text-align: center">Leave a drawing!</h1>
+<p style="text-align: center">Feel free to draw something! It will be sent anonymously!</p>
+        <div class="drawing-container">
+            <canvas id="drawingCanvas" width="500" height="400"></canvas>
+            <div class="drawing-controls">
+                <div class="tool-controls">
+                    <input type="color" id="colorPicker" value="#000000" title="Choose Color">
+                    <i class="fas fa-undo icon-btn" id="undoBtn" title="Undo"></i>
+                    <input type="range" id="brushSize" min="1" max="50" value="5" title="Brush Size">
+                </div>
+                <div class="button-controls">
+                    <select id="toolSelect" class="control-select">
+                        <option value="brush">Brush</option>
+                        <option value="eraser">Eraser</option>
+                        <option value="fill">Fill</option>
+                    </select>
+                    <button class="control-btn" id="clearBtn">Clear</button>
+                    <button class="control-btn" id="sendBtn">Send to Kelo</button>
+                </div>
+            </div>
+        </div>
+    `
+},
 			
         ];
 
@@ -446,16 +578,280 @@
 
             // Function to activate tab
             function activateTab(tabId) {
-                // Update buttons
-                document.querySelectorAll('.blog-post').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`[data-tab-id="${tabId}"]`).classList.add('active');
+    // Update buttons
+    document.querySelectorAll('.blog-post').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-tab-id="${tabId}"]`).classList.add('active');
 
-                // Update content
-                const tab = tabs.find(t => t.id === tabId);
-                tabContent.innerHTML = tab.content;
+    // Update content
+    const tab = tabs.find(t => t.id === tabId);
+    tabContent.innerHTML = tab.content;
+
+    // Initialize drawing if we're on the drawing tab
+    if (tabId === 'tab-4') {
+        const canvas = document.getElementById('drawingCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            let currentTool = 'brush';
+            let lastColor = '#000000';
+
+            // Undo functionality setup
+            const undoStack = [];
+            let isDrawingAction = false;
+
+            // Set initial canvas background to white and save initial state
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+
+            function saveCanvasState() {
+                if (isDrawingAction) {
+                    const state = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    undoStack.push(state);
+                    isDrawingAction = false;
+                    
+                    // Update undo button state
+                    const undoBtn = document.getElementById('undoBtn');
+                    undoBtn.classList.remove('disabled');
+                }
             }
+
+            function floodFill(startX, startY, fillColor) {
+                isDrawingAction = true;
+                // Get canvas data
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+
+                // Get the color we're targeting to replace
+                const startPos = (Math.floor(startY) * canvas.width + Math.floor(startX)) * 4;
+                const startR = pixels[startPos];
+                const startG = pixels[startPos + 1];
+                const startB = pixels[startPos + 2];
+
+                // Convert fill color from hex to RGB
+                const r = parseInt(fillColor.substr(1,2), 16);
+                const g = parseInt(fillColor.substr(3,2), 16);
+                const b = parseInt(fillColor.substr(5,2), 16);
+
+                // Don't fill if we're trying to fill with the same color
+                if (startR === r && startG === g && startB === b) return;
+
+                function matchStartColor(pixelPos) {
+                    return (
+                        pixels[pixelPos] === startR &&
+                        pixels[pixelPos + 1] === startG &&
+                        pixels[pixelPos + 2] === startB
+                    );
+                }
+
+                function colorPixel(pixelPos) {
+                    pixels[pixelPos] = r;
+                    pixels[pixelPos + 1] = g;
+                    pixels[pixelPos + 2] = b;
+                    pixels[pixelPos + 3] = 255;
+                }
+
+                const pixelsToCheck = [startPos];
+                while (pixelsToCheck.length > 0) {
+                    const currentPos = pixelsToCheck.pop();
+                    if (!matchStartColor(currentPos)) continue;
+
+                    let pixelPos = currentPos;
+                    let x = (pixelPos / 4) % canvas.width;
+                    let y = Math.floor((pixelPos / 4) / canvas.width);
+
+                    // Fill upwards
+                    while(y >= 0 && matchStartColor(pixelPos)) {
+                        colorPixel(pixelPos);
+                        if (x > 0 && matchStartColor(pixelPos - 4)) pixelsToCheck.push(pixelPos - 4);
+                        if (x < canvas.width - 1 && matchStartColor(pixelPos + 4)) pixelsToCheck.push(pixelPos + 4);
+                        y--;
+                        pixelPos -= canvas.width * 4;
+                    }
+
+                    // Fill downwards
+                    pixelPos = currentPos + canvas.width * 4;
+                    y = Math.floor((pixelPos / 4) / canvas.width);
+                    while(y < canvas.height && matchStartColor(pixelPos)) {
+                        colorPixel(pixelPos);
+                        if (x > 0 && matchStartColor(pixelPos - 4)) pixelsToCheck.push(pixelPos - 4);
+                        if (x < canvas.width - 1 && matchStartColor(pixelPos + 4)) pixelsToCheck.push(pixelPos + 4);
+                        y++;
+                        pixelPos += canvas.width * 4;
+                    }
+                }
+
+                ctx.putImageData(imageData, 0, 0);
+                saveCanvasState();
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                isDrawingAction = true;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                [lastX, lastY] = [x, y];
+            }
+
+            function startDrawing(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                
+                if (currentTool === 'fill') {
+                    floodFill(x, y, colorPicker.value);
+                    return;
+                }
+
+                isDrawing = true;
+                [lastX, lastY] = [x, y];
+            }
+
+            // Mouse Events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', () => {
+                isDrawing = false;
+                saveCanvasState();
+            });
+            canvas.addEventListener('mouseout', () => {
+                isDrawing = false;
+                saveCanvasState();
+            });
+
+            // Touch Events
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startDrawing(e);
+            });
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                draw(e);
+            });
+            canvas.addEventListener('touchend', () => {
+                isDrawing = false;
+                saveCanvasState();
+            });
+
+            // Controls
+            const toolSelect = document.getElementById('toolSelect');
+            const colorPicker = document.getElementById('colorPicker');
+            const brushSize = document.getElementById('brushSize');
+            const clearBtn = document.getElementById('clearBtn');
+            const sendBtn = document.getElementById('sendBtn');
+            const undoBtn = document.getElementById('undoBtn');
+
+            toolSelect.addEventListener('change', (e) => {
+                currentTool = e.target.value;
+                if (currentTool === 'eraser') {
+                    lastColor = ctx.strokeStyle;
+                    ctx.strokeStyle = '#FFFFFF';
+                } else if (currentTool === 'brush') {
+                    ctx.strokeStyle = lastColor;
+                }
+            });
+
+            colorPicker.addEventListener('input', (e) => {
+                lastColor = e.target.value;
+                if (currentTool !== 'eraser') {
+                    ctx.strokeStyle = lastColor;
+                }
+            });
+
+            brushSize.addEventListener('input', (e) => {
+                ctx.lineWidth = e.target.value;
+            });
+
+            clearBtn.addEventListener('click', () => {
+                isDrawingAction = true;
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = colorPicker.value;
+                saveCanvasState();
+            });
+
+            undoBtn.addEventListener('click', () => {
+                if (undoStack.length > 1) {
+                    undoStack.pop(); // Remove current state
+                    const previousState = undoStack[undoStack.length - 1];
+                    ctx.putImageData(previousState, 0, 0);
+                    
+                    // Disable undo button if we're back to initial state
+                    if (undoStack.length === 1) {
+                        undoBtn.classList.add('disabled');
+                    }
+                }
+            });
+
+            sendBtn.addEventListener('click', async () => {
+                // Art Webhook
+                const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
+                
+                try {
+                    sendBtn.disabled = true;
+                    sendBtn.textContent = 'Sending...';
+                    
+                    const imageData = canvas.toDataURL().split(',')[1];
+                    
+                    const response = await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            content: 'New drawing received!',
+                            embeds: [{
+                                image: {
+                                    url: 'attachment://drawing.png'
+                                }
+                            }],
+                            attachments: [{
+                                id: 0,
+                                description: 'Drawing',
+                                filename: 'drawing.png',
+                                content_type: 'image/png',
+                                data: imageData
+                            }]
+                        })
+                    });
+
+                    if (response.ok) {
+                        sendBtn.textContent = 'Sent!';
+                        setTimeout(() => {
+                            sendBtn.disabled = false;
+                            sendBtn.textContent = 'Send to Kelo';
+                        }, 2000);
+                    } else {
+                        throw new Error('Failed to send');
+                    }
+                } catch (error) {
+                    sendBtn.textContent = 'Failed to send';
+                    setTimeout(() => {
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Send to Kelo';
+                    }, 2000);
+                }
+            });
+
+            // Initialize drawing settings
+            ctx.strokeStyle = colorPicker.value;
+            ctx.lineWidth = brushSize.value;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+    }
+}
 
             // Add click listeners
             tabList.addEventListener('click', (e) => {
