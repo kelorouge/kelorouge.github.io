@@ -703,15 +703,27 @@
 }
 function getEventCoordinates(event, canvas) {
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
-    // Use touch coordinates for touch events, mouse coordinates otherwise
-    const x = event.touches ? event.touches[0].clientX : event.clientX;
-    const y = event.touches ? event.touches[0].clientY : event.clientY;
-
-    return {
-        x: x - rect.left,
-        y: y - rect.top
-    };
+    if (event.touches) {
+        const touch = event.touches[0];
+        // Get the touch position relative to the viewport
+        const touchX = touch.clientX;
+        const touchY = touch.clientY;
+        
+        // Convert to canvas coordinates considering scaling
+        return {
+            x: (touchX - rect.left) * scaleX,
+            y: (touchY - rect.top) * scaleY
+        };
+    } else {
+        // Handle mouse events
+        return {
+            x: (event.clientX - rect.left) * scaleX,
+            y: (event.clientY - rect.top) * scaleY
+        };
+    }
 }
 
             function startDrawing(event) {
