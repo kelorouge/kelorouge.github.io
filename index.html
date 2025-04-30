@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -37,7 +36,7 @@
       position: relative;
       overflow-x: hidden;
     }
-    .scroll-container {
+    .scroll-container {   
       width: 80%;
       margin: -10px auto 10px;
       overflow: hidden;
@@ -158,8 +157,10 @@
   text-align: center;
 }
 
+
     }
     .drawing-container {
+      position: relative;
       background-color: var(--color-secondary);
       padding: 10px;
       border-radius: 8px;
@@ -170,6 +171,8 @@
       align-items: center;
       gap: 10px;
     }
+	
+	
     .tools-row {
       display: flex;
       flex-wrap: wrap;
@@ -491,10 +494,60 @@
         justify-content: space-around;
         padding: 15px 0;
       }
+	  
       .social-icon {
         margin: 0;
       }
     }
+
+    /* Fridge Gallery Styles */
+    .fridge-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px; /* Spacing between doodles */
+      padding: 20px;
+      justify-content: center; /* Center doodles horizontally */
+      background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter background */
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .fridge-doodle {
+      position: relative; /* Needed for the pseudo-element magnet */
+      background-color: #ffffff; /* White paper background */
+      padding: 8px; /* Padding around the image */
+      border: 1px solid #ccc; /* Light border for the paper */
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2); /* Drop shadow */
+      max-width: 200px; /* Max width for each doodle container */
+      transition: transform 0.2s ease-in-out;
+      /* Optional: slight random rotation for realism */
+      /* transform: rotate(calc(random() * 6deg - 3deg)); /* Needs browser support or JS */ 
+    }
+
+    .fridge-doodle:hover {
+        transform: scale(1.05); /* Slight zoom on hover */
+    }
+
+    .fridge-doodle img {
+      display: block; /* Remove extra space below image */
+      max-width: 100%; /* Ensure image fits within the padding */
+      height: auto; /* Maintain aspect ratio */
+    }
+
+    /* Pseudo-element for the 'magnet' */
+    .fridge-doodle::before {
+      content: '';
+      position: absolute;
+      top: -10px; /* Position above the doodle */
+      left: calc(50% - 12px); /* Center the magnet */
+      width: 24px;
+      height: 24px;
+      background-color: #E74C3C; /* Red magnet color, adjust as needed */
+      border-radius: 50%; /* Make it round */
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Magnet shadow */
+      border: 2px solid #C0392B; /* Darker border for magnet */
+    }
+
   </style>
 </head>
 <body>
@@ -506,7 +559,7 @@
     <div class="profile-info">
       <div class="profile-pic">
         <a href="https://bsky.app/profile/rogue.red" target="_blank" rel="noopener noreferrer">
-          <img src="https://cdn.bsky.app/img/avatar/plain/did:plc:fmzp7iyocwxuadfrpmllnlfm/bafkreigzbmhdghl2xpiljuukvv52hljynazjh4elwno6fj4om4skunwkmm@jpeg"
+          <img src="https://cdn.bsky.app/img/avatar/plain/did:plc:fmzp7iyocwxuadfrpmllnlfm/bafkreigzp442ifkmddxo73ejx4ilezjqhbi7kwxee6ylifc2abg4t2rfc4@jpeg"
                alt="Profile Picture" loading="lazy">
         </a>
       </div>
@@ -551,6 +604,9 @@
           <h1 style="text-align: center">Leave a drawing or message!</h1>
           <div class="drawing-container">
             <div class="tools-row">
+              <button class="tool-btn" id="pixelBtn" title="Toggle Pixel Art Mode">
+                <i class="fas fa-th"></i>
+              </button>
               <button class="tool-btn active" id="brushBtn" title="Brush Tool">
                 <i class="fas fa-paint-brush"></i>
               </button>
@@ -570,7 +626,10 @@
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
-            <canvas id="drawingCanvas" width="500" height="400"></canvas>
+            <div style="position: relative; width: 500px; height: 400px;">
+              <canvas id="drawingCanvas" width="500" height="400"></canvas>
+              <canvas id="gridCanvas" width="500" height="400" style="position: absolute; top: 0; left: 0; pointer-events: none; display: none;"></canvas>
+            </div>
           </div>
           <div class="canvas-controls">
             <div class="canvas-tool-group">
@@ -613,36 +672,59 @@
         `
       },
       {
-        id: 'tab-1',
-        title: 'About Me',
+        id: 'tab-3',
+        title: 'The Fridge',
         content: `
-		<div class="about-me-center">
-          <h1>About Me</h1>
-          <p>Kelo | 25 | He/They | Demisexual<br>
-		  <br>
-          <h2>✨ Interests ✨</h2>
-		  Fire Emblem<br>
-		  The Legend of Zelda<br>
-		  Final Fantasy / XIV<br>
-		  Kirby!<br>
-		  Pokemon<br>
-		  Kingdom Hearts<br>
-		  Mega Man Battle Network<br>
-		  Soulsborne <br>
-		  <br>
-		  <h4>✨Other✨</h4>
-		  Pixel art, fantasy books, and romance manga! <br><br><br><br>
-		  
-		  
-		  
-		  </p>
-          <p>All of my spaces are kept safe and positive, so please do not bring any drama or politics to me!<br>
-             ✨I'm here to make you happy!✨</p>
-          <div class="about-box">
-            <h3>DNI</h3>
-            <p>If you're a minor, into drama, heavy politics, or a primarily NSFW account!</p>
+          <h1 style="text-align: center">The Fridge</h1>
+          <p style="text-align: center">A gallery of doodles left by visitors!</p>
+          <div class="fridge-gallery">
+            
+             <!-- Doodles copy and paste  -->
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/RkSQMg2.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/jSeLARQ.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/goQyd2Z.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/shZVgKD.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/Tnx9YuS.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/8Mn0SaJ.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/2wgJ96y.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/AwtHUzz.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/8UxnTqT.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/cqMaFR1.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/siunHeo.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/e5t1U2s.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/onrgiAB.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/FccSsL1.png" alt="Visitor Doodle">
+              </div>
+              
+            
           </div>
-		</div>
         `
       },
       {
@@ -654,67 +736,84 @@
         `
       },
       {
-        id: 'tab-3',
-        title: 'WIP',
+        id: 'tab-1',
+        title: 'About Me',
         content: `
-          <h1>WIP</h1>
-          <p>WIP</p>
+		<div class="about-me-center">
+          <h1>About Me</h1>
+          <p>Kelo | 25 | He/They | Demisexual<br>
+		  <br>
+          <h2>✨ Interests ✨</h2>
+		  Fire Emblem<br>
+          Kirby!<br>
+          Pokemon<br>
+		  Soulsborne<br>
+          Kingdom Hearts<br>
+          The Legend of Zelda<br>
+		  Final Fantasy / XIV<br>
+		  Mega Man Battle Network<br>
+		  <br>
+		  <h4>✨Other✨</h4>
+		  Pixel art, HTML, fantasy books, and romance manga! <br><br><br><br>
+		  
+		  
+		  
+		  </p>
+          <p>All of my spaces are kept safe and positive, so please do not bring any drama or politics to me!<br>
+             ✨I'm here to make you happy!✨</p>
+          <div class="about-box">
+            <h3>DNI</h3>
+            <p>Minors, accounts focused on drama/politics, or primarily NSFW content.</p>
+          </div>
+		</div>
         `
       }
     ];
 
     let currentCanvas = null;
     let currentContext = null;
+	
 
     function initDrawingCanvas() {
       const canvas = document.getElementById('drawingCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = false; 
+	  const gridCanvas = document.getElementById('gridCanvas'); 
+      const gtx = gridCanvas ? gridCanvas.getContext('2d') : null; 
+
+
+	  let pixelMode = false; // Re-enable pixel mode flag
 
       const sendBtn = document.getElementById('sendBtn');
       const doodleSignature = document.getElementById('doodleSignature');
       let signaturePrompted = false;
 
+      
       sendBtn.addEventListener('click', async () => {
-        // First click: show signature input, change button text
         if (!signaturePrompted) {
           signaturePrompted = true;
           doodleSignature.style.display = 'inline-block';
           sendBtn.textContent = 'Send Now';
           return;
         }
-
-        // Second click: proceed with sending
         sendBtn.disabled = true;
         sendBtn.textContent = 'Sending...';
-        const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ'; 
+        const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
         try {
           const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-          if (!blob) {
-            sendBtn.textContent = 'Failed to send (Blob error)';
-            setTimeout(() => {
-              sendBtn.disabled = false;
-              sendBtn.textContent = 'Send Now';
-            }, 2000);
-            return;
-          }
+          if (!blob) throw new Error('Blob creation failed');
           const formData = new FormData();
           formData.append('file', blob, 'doodle.png');
           const signatureValue = doodleSignature.value.trim();
           if (signatureValue) {
             formData.append('content', `**Doodle by:** ${signatureValue}`);
           }
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            body: formData
-          });
-          if (response.ok) {
-            sendBtn.textContent = 'Doodle Sent!';
-          } else {
-            throw new Error('Failed to send');
-          }
+          const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+          if (!response.ok) throw new Error('Failed to send');
+          sendBtn.textContent = 'Doodle Sent!';
         } catch (error) {
+          console.error('Error sending doodle:', error);
           sendBtn.textContent = 'Error Sending';
         } finally {
           setTimeout(() => {
@@ -723,37 +822,165 @@
             doodleSignature.style.display = 'none';
             doodleSignature.value = '';
             signaturePrompted = false;
-          }, 20000);
+          }, 5000);
         }
       });
+      
+
 
       const colorPicker = document.getElementById('colorPicker');
       const brushSize = document.getElementById('brushSize');
 
+      
       const state = {
         isDrawing: false,
         tool: 'brush',
         lastX: 0,
         lastY: 0,
+        lastSnappedX: -1, 
+        lastSnappedY: -1, 
         undoStack: [],
         redoStack: [],
         maxStates: 50
       };
 
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = brushSize ? brushSize.value : 5;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      saveState();
+      const pixelSize = 20; 
+
+      const canvasBorderSize = 3; // Define the border size from CSS
+
+      
+
+      function updateContextSettings() {
+          const selectedColor = colorPicker ? colorPicker.value : '#000000';
+          const currentBrushSize = brushSize ? brushSize.value : 5;
+
+          if (state.tool === 'eraser') {
+              ctx.strokeStyle = '#FFFFFF';
+              ctx.fillStyle = '#FFFFFF'; // Ensure fillStyle is set for eraser in pixel mode
+          } else {
+              ctx.strokeStyle = selectedColor;
+              ctx.fillStyle = selectedColor; // Ensure fillStyle is set for brush/fill in pixel mode
+          }
+          ctx.lineWidth = currentBrushSize;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+      }
+
+
+      function drawGrid() { // Revised grid drawing function
+          if (!gtx || !gridCanvas) return; // Guard clause
+
+          const width = gridCanvas.width; // Use canvas intrinsic width/height
+          const height = gridCanvas.height;
+
+          gtx.clearRect(0, 0, width, height); // Clear the entire grid canvas
+          gtx.save(); // Save context state
+
+          // Translate the grid context origin to align with the drawing canvas's content area top-left
+          gtx.translate(canvasBorderSize, canvasBorderSize);
+
+          gtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+          gtx.lineWidth = 0.5; // Keep thin lines
+
+          
+          const effectiveWidth = width - canvasBorderSize * 2;
+          const effectiveHeight = height - canvasBorderSize * 2;
+
+          // Draw vertical lines relative to the translated origin
+          // Start from the first grid line position (pixelSize) up to the effective width
+          for (let x = pixelSize; x < effectiveWidth; x += pixelSize) {
+            gtx.beginPath();
+            // Draw line from (x - 0.5, 0) to (x - 0.5, effectiveHeight) in the translated coordinate space
+            gtx.moveTo(x - 0.5, 0);
+            gtx.lineTo(x - 0.5, effectiveHeight);
+            gtx.stroke();
+          }
+
+          
+          for (let y = pixelSize; y < effectiveHeight; y += pixelSize) {
+            gtx.beginPath();
+           
+            gtx.moveTo(0, y - 0.5);
+            gtx.lineTo(effectiveWidth, y - 0.5);
+            gtx.stroke();
+          }
+
+          gtx.restore(); 
+      }
+
+      function updateUndoRedoButtons() {
+          const undoDisabled = state.undoStack.length <= 1;
+          const redoDisabled = state.redoStack.length === 0;
+
+          if (undoBtn) {
+              undoBtn.disabled = undoDisabled;
+          }
+          if (redoBtn) {
+              redoBtn.disabled = redoDisabled;
+          }
+          
+      }
+
+      function togglePixelMode() {
+        pixelMode = !pixelMode;
+        console.log('Toggling Pixel Mode. New state:', pixelMode); // Log mode toggle
+        ctx.imageSmoothingEnabled = !pixelMode;
+
+        // Hide/show brush size controls based on pixel mode AND fill tool state
+        const brushControlsDiv = brushSize ? brushSize.closest('.brush-controls') : null; // Find the container
+        // Add console log to verify selection
+        console.log('Selected brush controls container:', brushControlsDiv);
+
+        if (brushControlsDiv) {
+            const shouldHide = pixelMode || state.tool === 'fill'; // Hide if pixel mode OR fill tool is active
+            const newDisplay = shouldHide ? 'none' : 'block';
+            console.log(`Pixel Toggle: Setting brushControlsDiv display to: ${newDisplay} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
+            brushControlsDiv.style.display = newDisplay;
+        } else if (brushSize) {
+             console.warn('brushControlsDiv not found, disabling brushSize slider directly.');
+            brushSize.disabled = pixelMode;
+        } else {
+             console.warn('Neither brushControlsDiv nor brushSize element found.');
+        }
+
+        if (gridCanvas) {
+             if (pixelMode) {
+                gridCanvas.style.display = 'block';
+                drawGrid();
+             } else {
+                gridCanvas.style.display = 'none';
+             }
+        }
+        state.lastSnappedX = -1;
+        state.lastSnappedY = -1;
+        updateCursorStyle();
+      }
+
+      function updateCursorStyle() {
+          if (!canvas) return;
+          let cursorStyle = 'crosshair'; // Default
+
+          if (pixelMode) {
+              cursorStyle = 'cell';
+          } else if (state.tool === 'fill') {
+               cursorStyle = 'copy';
+          } else if (state.tool === 'eraser') {
+               cursorStyle = 'crosshair';
+          } else {
+              cursorStyle = 'crosshair';
+          }
+          canvas.style.cursor = cursorStyle;
+          
+      }
+
 
       function saveState() {
         if (state.undoStack.length >= state.maxStates) {
           state.undoStack.shift();
         }
         state.undoStack.push(canvas.toDataURL());
-        state.redoStack = [];
+        state.redoStack = []; 
+        updateUndoRedoButtons(); 
       }
 
       function restoreState(url) {
@@ -769,6 +996,7 @@
         if (state.undoStack.length > 1) {
           state.redoStack.push(state.undoStack.pop());
           restoreState(state.undoStack[state.undoStack.length - 1]);
+          updateUndoRedoButtons(); 
         }
       }
 
@@ -777,89 +1005,250 @@
           const nextState = state.redoStack.pop();
           state.undoStack.push(nextState);
           restoreState(nextState);
+          updateUndoRedoButtons(); 
         }
       }
 
-      function floodFill(x, y, fillColor) {
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const pixels = imageData.data;
-        const startPos = (Math.floor(y) * canvas.width + Math.floor(x)) * 4;
-        const targetR = pixels[startPos];
-        const targetG = pixels[startPos + 1];
-        const targetB = pixels[startPos + 2];
-        const fillR = parseInt(fillColor.substr(1, 2), 16);
-        const fillG = parseInt(fillColor.substr(3, 2), 16);
-        const fillB = parseInt(fillColor.substr(5, 2), 16);
-        const tolerance = 100;
+      // --- Flood Fill (Keep, but maybe test separately later??) ---
+       function floodFill(x, y) { 
+            updateContextSettings(); 
+            const fillColor = ctx.fillStyle; 
+            if (!/^#[0-9A-F]{6}$/i.test(fillColor)) return;
 
-        function colorMatches(pos) {
-          return (
-            Math.abs(pixels[pos] - targetR) < tolerance &&
-            Math.abs(pixels[pos + 1] - targetG) < tolerance &&
-            Math.abs(pixels[pos + 2] - targetB) < tolerance
-          );
-        }
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const startPos = (Math.floor(y) * canvas.width + Math.floor(x)) * 4;
 
-        function setPixel(pos) {
-          pixels[pos] = fillR;
-          pixels[pos + 1] = fillG;
-          pixels[pos + 2] = fillB;
-          pixels[pos + 3] = 255;
-        }
+            if (startPos < 0 || startPos >= pixels.length - 3) return;
 
-        const queue = [[Math.floor(x), Math.floor(y)]];
-        const processed = new Set();
+            const targetR = pixels[startPos];
+            const targetG = pixels[startPos + 1];
+            const targetB = pixels[startPos + 2];
+            const targetA = pixels[startPos + 3];
 
-        while (queue.length) {
-          const [cx, cy] = queue.shift();
-          const pos = (cy * canvas.width + cx) * 4;
-          const key = `${cx},${cy}`;
-          if (processed.has(key)) continue;
-          if (cx < 0 || cx >= canvas.width || cy < 0 || cy >= canvas.height) continue;
-          if (!colorMatches(pos)) continue;
-          setPixel(pos);
-          processed.add(key);
-          queue.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
-        }
-        ctx.putImageData(imageData, 0, 0);
-        saveState();
+            if (targetA < 250) return;
+
+            const fillR = parseInt(fillColor.substr(1, 2), 16);
+            const fillG = parseInt(fillColor.substr(3, 2), 16);
+            const fillB = parseInt(fillColor.substr(5, 2), 16);
+
+            if (targetR === fillR && targetG === fillG && targetB === fillB) return;
+
+            const tolerance = 10;
+
+            function colorMatches(pos) {
+              if (pos < 0 || pos >= pixels.length - 3) return false;
+              if (pixels[pos + 3] < 250) return false;
+              return (
+                Math.abs(pixels[pos] - targetR) <= tolerance &&
+                Math.abs(pixels[pos + 1] - targetG) <= tolerance &&
+                Math.abs(pixels[pos + 2] - targetB) <= tolerance
+              );
+            }
+
+            function setPixel(pos) {
+              pixels[pos] = fillR;
+              pixels[pos + 1] = fillG;
+              pixels[pos + 2] = fillB;
+              pixels[pos + 3] = 255;
+            }
+
+            const queue = [[Math.floor(x), Math.floor(y)]];
+            const processed = new Set([`${Math.floor(x)},${Math.floor(y)}`]);
+            let iterations = 0;
+            const maxIterations = canvas.width * canvas.height * 2;
+
+            while (queue.length > 0 && iterations < maxIterations) {
+              iterations++;
+              const [cx, cy] = queue.shift();
+              const currentPos = (cy * canvas.width + cx) * 4;
+
+              if (!colorMatches(currentPos)) continue;
+
+              setPixel(currentPos);
+
+              const neighbors = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
+              for (const [nx, ny] of neighbors) {
+                  const nKey = `${nx},${ny}`;
+                  if (nx >= 0 && nx < canvas.width && ny >= 0 && ny < canvas.height && !processed.has(nKey)) {
+                       processed.add(nKey);
+                       const neighborPos = (ny * canvas.width + nx) * 4;
+                      if (colorMatches(neighborPos)) {
+                           queue.push([nx, ny]);
+                      }
+                  }
+              }
+            }
+             if (iterations >= maxIterations) console.error("Flood fill exceeded max iterations.");
+            ctx.putImageData(imageData, 0, 0);
       }
+      // --- End Flood Fill ---
+
 
       function getCoordinates(e) {
         const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return { x: NaN, y: NaN };
         return {
           x: (e.clientX - rect.left) * (canvas.width / rect.width),
           y: (e.clientY - rect.top)  * (canvas.height / rect.height)
         };
       }
 
+      function getTouchCoordinates(e) {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return { x: NaN, y: NaN };
+        const t = e.touches[0] || e.changedTouches[0];
+        if (!t) return { x: NaN, y: NaN };
+        return {
+          x: (t.clientX - rect.left) * (canvas.width / rect.width),
+          y: (t.clientY - rect.top)  * (canvas.height / rect.height)
+        };
+      }
+
+
+      // --- Drawing Event Handlers  ---
+
       function startDrawing(e) {
         const coords = getCoordinates(e);
+        if (isNaN(coords.x) || isNaN(coords.y)) return;
+
         state.isDrawing = true;
-        state.lastX = coords.x;
-        state.lastY = coords.y;
+        [state.lastX, state.lastY] = [coords.x, coords.y];
+        state.lastSnappedX = -1; // Reset snap state
+        state.lastSnappedY = -1;
+
+        updateContextSettings();
+
         if (state.tool === 'fill') {
-          floodFill(coords.x, coords.y, ctx.strokeStyle);
-          state.isDrawing = false;
-        }
-      }
-      function draw(e) {
-        if (!state.isDrawing || state.tool === 'fill') return;
-        const coords = getCoordinates(e);
-        ctx.beginPath();
-        ctx.moveTo(state.lastX, state.lastY);
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-        state.lastX = coords.x;
-        state.lastY = coords.y;
-      }
-      function stopDrawing() {
-        if (state.isDrawing) {
-          state.isDrawing = false;
+          floodFill(coords.x, coords.y);
           saveState();
+          state.isDrawing = false;
+        } else if (pixelMode) { // Re-add pixel mode logic
+          const x = Math.floor(coords.x / pixelSize) * pixelSize;
+          const y = Math.floor(coords.y / pixelSize) * pixelSize;
+          ctx.fillRect(x, y, pixelSize, pixelSize); // Draw first pixel block
+          state.lastSnappedX = x;
+          state.lastSnappedY = y;
+          // Don't save state until stopDrawing this was really annoying..
+        } else {
+          // Standard brush/eraser start
+          ctx.beginPath();
+          ctx.moveTo(coords.x, coords.y);
         }
       }
 
+      function draw(e) {
+        if (!state.isDrawing) return;
+        const coords = getCoordinates(e);
+         if (isNaN(coords.x) || isNaN(coords.y)) return;
+
+        if (pixelMode) { // Re-add pixel mode logic
+            if (state.tool !== 'fill') {
+                const x = Math.floor(coords.x / pixelSize) * pixelSize;
+                const y = Math.floor(coords.y / pixelSize) * pixelSize;
+                // Only draw if snapped position changes
+                if (x !== state.lastSnappedX || y !== state.lastSnappedY) {
+                    updateContextSettings(); // Ensure fillStyle is current
+                    ctx.fillRect(x, y, pixelSize, pixelSize);
+                    state.lastSnappedX = x;
+                    state.lastSnappedY = y;
+                }
+            }
+         } else { // Standard brush/eraser drawing
+             if (state.tool !== 'fill') {
+                 updateContextSettings(); // Ensure settings are current
+                 ctx.lineTo(coords.x, coords.y);
+                 ctx.stroke();
+                 [state.lastX, state.lastY] = [coords.x, coords.y];
+             }
+         }
+      }
+
+      function stopDrawing() {
+        if (state.isDrawing) {
+          if (state.tool !== 'fill') {
+            saveState();
+          }
+          state.isDrawing = false;
+        }
+      }
+
+
+      // --- Touch Handlers (Re-integrate Pixel Mode) ---
+
+       function startDrawingTouch(e) {
+        e.preventDefault();
+        const coords = getTouchCoordinates(e);
+        if (isNaN(coords.x) || isNaN(coords.y)) return;
+
+        state.isDrawing = true;
+        [state.lastX, state.lastY] = [coords.x, coords.y];
+        state.lastSnappedX = -1;
+        state.lastSnappedY = -1;
+
+        updateContextSettings();
+
+        if (state.tool === 'fill') {
+          floodFill(coords.x, coords.y);
+          saveState();
+          state.isDrawing = false;
+        } else if (pixelMode) { // Re-add pixel mode logic
+          const x = Math.floor(coords.x / pixelSize) * pixelSize;
+          const y = Math.floor(coords.y / pixelSize) * pixelSize;
+          ctx.fillRect(x, y, pixelSize, pixelSize);
+          state.lastSnappedX = x;
+          state.lastSnappedY = y;
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(coords.x, coords.y);
+        }
+      }
+
+      function drawTouch(e) {
+        e.preventDefault();
+        if (!state.isDrawing) return;
+        const coords = getTouchCoordinates(e);
+         if (isNaN(coords.x) || isNaN(coords.y)) return;
+
+        if (pixelMode) { // Re-add pixel mode logic
+            if (state.tool !== 'fill') {
+                const x = Math.floor(coords.x / pixelSize) * pixelSize;
+                const y = Math.floor(coords.y / pixelSize) * pixelSize;
+                if (x !== state.lastSnappedX || y !== state.lastSnappedY) {
+                    updateContextSettings();
+                    ctx.fillRect(x, y, pixelSize, pixelSize);
+                    state.lastSnappedX = x;
+                    state.lastSnappedY = y;
+                }
+            }
+        } else { // Standard brush/eraser drawing
+            if (state.tool !== 'fill') {
+                updateContextSettings();
+                ctx.lineTo(coords.x, coords.y);
+                ctx.stroke();
+                [state.lastX, state.lastY] = [coords.x, coords.y];
+            }
+        }
+      }
+
+       function stopDrawingTouch(e) { // Unchanged from simplified version
+        e.preventDefault();
+         if (state.isDrawing) {
+            if (state.tool !== 'fill') {
+                saveState();
+            }
+            state.isDrawing = false;
+        }
+      }
+
+      // --- Initialization & Control Listeners ---
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      updateContextSettings();
+      updateCursorStyle(); // Set initial cursor
+
+      // Event listeners for drawing actions
       canvas.addEventListener('mousedown', startDrawing);
       canvas.addEventListener('mousemove', draw);
       canvas.addEventListener('mouseup', stopDrawing);
@@ -868,45 +1257,10 @@
       canvas.addEventListener('touchstart', startDrawingTouch, { passive: false });
       canvas.addEventListener('touchmove', drawTouch, { passive: false });
       canvas.addEventListener('touchend', stopDrawingTouch, { passive: false });
+      canvas.addEventListener('touchcancel', stopDrawingTouch, { passive: false });
 
-      function getTouchCoordinates(e) {
-        const rect = canvas.getBoundingClientRect();
-        const t = e.touches[0] || e.changedTouches[0];
-        return {
-          x: (t.clientX - rect.left) * (canvas.width / rect.width),
-          y: (t.clientY - rect.top)  * (canvas.height / rect.height)
-        };
-      }
-      function startDrawingTouch(e) {
-        e.preventDefault();
-        const coords = getTouchCoordinates(e);
-        state.isDrawing = true;
-        state.lastX = coords.x;
-        state.lastY = coords.y;
-        if (state.tool === 'fill') {
-          floodFill(coords.x, coords.y, ctx.strokeStyle);
-          state.isDrawing = false;
-        }
-      }
-      function drawTouch(e) {
-        e.preventDefault();
-        if (!state.isDrawing || state.tool === 'fill') return;
-        const coords = getTouchCoordinates(e);
-        ctx.beginPath();
-        ctx.moveTo(state.lastX, state.lastY);
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-        state.lastX = coords.x;
-        state.lastY = coords.y;
-      }
-      function stopDrawingTouch(e) {
-        e.preventDefault();
-        if (state.isDrawing) {
-          state.isDrawing = false;
-          saveState();
-        }
-      }
 
+      // Tool button listeners
       const toolBtns = {
         brush: document.getElementById('brushBtn'),
         eraser: document.getElementById('eraserBtn'),
@@ -915,48 +1269,68 @@
       Object.entries(toolBtns).forEach(([tool, btn]) => {
         if (!btn) return;
         btn.addEventListener('click', () => {
+          // console.log('Tool selected:', tool); // Uncomment for tool logging
           Object.values(toolBtns).forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           state.tool = tool;
-          ctx.strokeStyle = (tool === 'eraser') ? '#FFFFFF' : colorPicker.value;
+          updateContextSettings();
+          updateCursorStyle();
+           // Update brush controls visibility based on tool AND pixel mode
+           if (brushControlsDiv) {
+                const shouldHide = pixelMode || state.tool === 'fill'; // Hide if pixel mode OR fill tool is active
+                const newDisplay = shouldHide ? 'none' : 'block';
+                console.log(`Tool Click (${tool}): Setting brushControlsDiv display to: ${newDisplay} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
+                brushControlsDiv.style.display = newDisplay;
+            } else {
+                 console.warn(`Tool click (${tool}): brushControlsDiv not found.`);
+            }
         });
       });
 
+      // Other control listeners
+      const pixelBtn = document.getElementById('pixelBtn');
+      if (pixelBtn) pixelBtn.addEventListener('click', togglePixelMode);
+
       const undoBtn = document.getElementById('undoBtn');
       const redoBtn = document.getElementById('redoBtn');
+      const clearBtn = document.getElementById('clearBtn');
+
       if (undoBtn) undoBtn.addEventListener('click', undo);
       if (redoBtn) redoBtn.addEventListener('click', redo);
-
-      if (colorPicker) {
-        colorPicker.addEventListener('input', e => {
-          if (state.tool !== 'eraser') {
-            ctx.strokeStyle = e.target.value;
-          }
-        });
-      }
-
+      if (colorPicker) colorPicker.addEventListener('input', updateContextSettings);
       if (brushSize) {
         brushSize.addEventListener('input', e => {
-          ctx.lineWidth = e.target.value;
-          const brushDisplay = document.getElementById('brushSizeDisplay');
-          if (brushDisplay) {
-            brushDisplay.textContent = `${e.target.value}px`;
+          if (!pixelMode) { // Only update if slider is visible/enabled
+              updateContextSettings();
           }
+          const brushDisplay = document.getElementById('brushSizeDisplay');
+          if (brushDisplay) brushDisplay.textContent = `${e.target.value}px`;
         });
       }
-
-      const clearBtn = document.getElementById('clearBtn');
       if (clearBtn) {
         clearBtn.addEventListener('click', () => {
           ctx.fillStyle = 'white';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.fillStyle = colorPicker.value;
+          updateContextSettings();
           saveState();
         });
       }
 
+      // --- Initial Save & Button State ---
+      saveState();
+      updateUndoRedoButtons();
+      // Ensure initial brush control visibility is correct
+      if (brushControlsDiv) {
+           const initialHide = pixelMode || state.tool === 'fill'; // Check initial state
+           brushControlsDiv.style.display = initialHide ? 'none' : 'block';
+           console.log(`Initial: Setting brushControlsDiv display to: ${initialHide ? 'none' : 'block'} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
+      } else {
+           console.warn('Initial: brushControlsDiv not found.');
+      }
+
+
       return { canvas, ctx };
-    }
+    } // End of initDrawingCanvas
 
     function initializeMessageBox() {
       const messageText = document.getElementById('messageText');
