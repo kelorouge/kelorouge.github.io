@@ -737,6 +737,30 @@
               <div class="fridge-doodle">
                <img src="https://i.imgur.com/mfucOoD.jpg" alt="Visitor Doodle">
               </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/SPenhFh.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/vzeJAp1.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/3VGRRKm.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/hKvstEg.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/hp8kHcJ.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/sNPpm0U.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/0gdU2bf.png" alt="Visitor Doodle">
+              </div>
+              <div class="fridge-doodle">
+               <img src="https://i.imgur.com/FV2Mc1Z.png" alt="Visitor Doodle">
+              </div>
               
             
           </div>
@@ -805,6 +829,9 @@
       let signaturePrompted = false;
 
       
+      const brushSize = document.getElementById('brushSize');
+      const brushControlsDiv = brushSize ? brushSize.closest('.brush-controls') : null;
+
       sendBtn.addEventListener('click', async () => {
         if (!signaturePrompted) {
           signaturePrompted = true;
@@ -844,7 +871,6 @@
 
 
       const colorPicker = document.getElementById('colorPicker');
-      const brushSize = document.getElementById('brushSize');
 
       
       const state = {
@@ -942,10 +968,6 @@
         ctx.imageSmoothingEnabled = !pixelMode;
 
         // Hide/show brush size controls based on pixel mode AND fill tool state
-        const brushControlsDiv = brushSize ? brushSize.closest('.brush-controls') : null; // Find the container
-        // Add console log to verify selection
-        console.log('Selected brush controls container:', brushControlsDiv);
-
         if (brushControlsDiv) {
             const shouldHide = pixelMode || state.tool === 'fill'; // Hide if pixel mode OR fill tool is active
             const newDisplay = shouldHide ? 'none' : 'block';
@@ -1350,6 +1372,12 @@
     function initializeMessageBox() {
       const messageText = document.getElementById('messageText');
       const sendMessageBtn = document.getElementById('sendMessageBtn');
+      console.log('messageText:', messageText, 'sendMessageBtn:', sendMessageBtn);
+
+      if (!messageText || !sendMessageBtn) {
+        console.error('Message box elements not found!');
+        return;
+      }
 
       async function sendMessage() {
         const message = messageText.value.trim();
