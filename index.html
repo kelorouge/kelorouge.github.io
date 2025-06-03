@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/coloris@0.23.1/dist/coloris.min.css"/>
   <style>
     :root {
       --color-primary: #231942;
@@ -175,9 +177,11 @@
 	
     .tools-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      flex-direction: row;
+      align-items: center;
       justify-content: center;
+      gap: 10px;
+      width: 100%;
     }
     #drawingCanvas {
       background-color: white;
@@ -187,72 +191,116 @@
       touch-action: none;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    .canvas-controls {
+    .canvas-controls-attached {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: row;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 15px;
-      padding: 0 20px;
+      justify-content: space-between;
+      width: 500px;
+      margin: 0 auto 0 auto;
+      background: none;
+      border: none;
+      border-radius: 0 0 15px 15px;
+      box-shadow: none;
+      padding: 0 0 8px 0;
+      position: relative;
+      z-index: 2;
     }
-    .canvas-tool-group {
+    .canvas-tool-group-attached {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    .canvas-send-group {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .tool-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-left: 15px;
-    }
-    .brush-controls {
-      background-color: var(--color-primary);
-      padding: 8px 15px;
-      border: 2px solid var(--color-border);
-      border-radius: 8px;
-    }
-    #colorPicker {
-      -webkit-appearance: none;
-      width: 40px;
-      height: 40px;
+      gap: 18px;
       padding: 0;
-      border: 2px solid var(--color-border);
-      border-radius: 6px;
-      cursor: pointer;
-      background-color: var(--color-primary);
+      background: none;
+      border: none;
       box-shadow: none;
     }
-    #colorPicker::-webkit-color-swatch-wrapper {
+    .canvas-send-group-attached {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       padding: 0;
-      border-radius: 6px;
-    }
-    #colorPicker::-webkit-color-swatch {
+      background: none;
       border: none;
+      box-shadow: none;
+    }
+    #colorPicker.tool-btn {
+      min-width: 44px;
+      min-height: 44px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      margin-right: 0;
+      transition: background 0.2s, border 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      outline: none;
+      border: 2px solid var(--color-border);
       border-radius: 6px;
+      background: var(--color-primary);
+      padding: 4px !important;
+      position: relative;
+    }
+    #colorPicker.tool-btn .pcr-button {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 0 0 2px var(--color-border) !important;
+      margin: 0 auto !important;
+      display: block !important;
+      background-clip: padding-box !important;
+      border: 2px solid #fff !important;
+      position: relative;
+    }
+    #colorPicker.tool-btn:hover, #colorPicker.tool-btn:focus {
+      background: var(--color-border);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent, #E0B1CB);
+    }
+    .pickr .pcr-app {
+      border-radius: 10px !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18) !important;
+    }
+    .brush-size-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 0;
+      box-shadow: none;
+    }
+    .brush-label {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-right: 8px;
+      font-family: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.18);
     }
     #brushSize {
       -webkit-appearance: none;
-      width: 100px;
+      width: 90px;
       height: 4px;
       background: var(--color-secondary);
       border-radius: 2px;
       border: none;
       outline: none;
+      margin: 0 2px;
+      box-shadow: none;
     }
     #brushSize::-webkit-slider-runnable-track {
       width: 100%;
       height: 4px;
       background-color: var(--color-secondary);
       border-radius: 2px;
-      border: 1px solid var(--color-border);
+      border: none;
     }
     #brushSize::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -263,24 +311,41 @@
       border-radius: 50%;
       cursor: pointer;
       margin-top: -6px;
+      box-shadow: none;
     }
-    #brushSizeDisplay {
-      background-color: var(--color-secondary);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 14px;
+    .brush-size-value {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-left: 12px;
+      font-family: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      vertical-align: middle;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.18);
     }
     .doodle-signature {
       display: none;
-      width: 160px;
-      padding: 8px;
+      width: 220px;
+      padding: 10px 14px;
       border: 2px solid var(--color-border);
       border-radius: 8px;
       background-color: var(--color-primary);
       color: var(--color-text);
-      font-size: 14px;
+      font-size: 15px;
       box-sizing: border-box;
-      margin-right: 10px;
+      margin-left: 14px;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .doodle-signature.doodle-signature-visible {
+      display: block;
+      opacity: 1;
+      transform: translateX(0);
     }
     .tool-btn, .icon-btn {
       background-color: var(--color-primary);
@@ -397,7 +462,13 @@
       background-color: var(--color-primary);
     }
     #sendBtn {
+      min-width: 140px;
+      max-width: 200px;
+      width: 160px;
+      text-align: center;
+      display: block;
       margin-left: auto;
+      margin-right: auto;
     }
     .message-status {
       text-align: center;
@@ -476,6 +547,21 @@
       .tools-row {
         width: 100%;
       }
+      .canvas-controls-attached, .drawing-container > div[style^="position: relative"] {
+        width: 100% !important;
+        min-width: 0;
+        max-width: 100vw;
+      }
+      .canvas-controls-attached {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 4px;
+      }
+      .canvas-tool-group-attached, .canvas-send-group-attached {
+        justify-content: center;
+        width: 100%;
+        padding: 8px 0;
+      }
     }
     @media (max-width: 480px) {
       .profile-pic {
@@ -548,6 +634,215 @@
       border: 2px solid #C0392B; /* Darker border for magnet */
     }
 
+    .color-picker-topright {
+      position: absolute;
+      top: -54px;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: flex-end;
+      width: 500px;
+      pointer-events: none;
+    }
+    .color-picker-topright #colorPicker {
+      pointer-events: auto;
+      min-width: 44px;
+      min-height: 44px;
+      border: 2px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+      margin-right: 0;
+    }
+    .canvas-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 500px;
+      margin: 0 auto 0 auto;
+      background: none;
+      border: none;
+      border-radius: 0 0 15px 15px;
+      box-shadow: none;
+      padding: 8px 0 0 0;
+      position: relative;
+      z-index: 2;
+    }
+    @media (max-width: 600px) {
+      .color-picker-topright, .canvas-footer {
+        width: 100% !important;
+        min-width: 0;
+        max-width: 100vw;
+      }
+    }
+
+    .tools-row.tools-row-centered {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+    }
+    .tools-btn-group {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+    }
+    .tools-btn-group-centered {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+    .color-picker-btn-group {
+      display: flex;
+      align-items: center;
+      margin-left: 18px;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: auto;
+    }
+    .color-picker-btn-group #colorPicker.tool-btn {
+      min-width: 48px;
+      min-height: 48px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      margin-right: 0;
+      transition: background 0.2s, border 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      outline: none;
+      border: 2px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-primary);
+    }
+    .color-picker-btn-group #colorPicker.tool-btn .pcr-button {
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 0 0 3px var(--color-border) !important;
+      box-sizing: border-box !important;
+      margin: 0 auto !important;
+      display: block !important;
+      position: relative;
+      top: 0;
+      left: 0;
+      background-clip: padding-box !important;
+    }
+    .color-picker-btn-group #colorPicker.tool-btn:hover, .color-picker-btn-group #colorPicker.tool-btn:focus {
+      background: var(--color-border);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent, #E0B1CB);
+    }
+    .brush-footer-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+    #brushSizePreview.brush-preview-outer {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      border: 1.5px solid var(--color-border);
+      margin-left: 4px;
+      box-shadow: none;
+      vertical-align: middle;
+      transition: background 0.15s, border 0.15s;
+      position: relative;
+    }
+    .brush-preview-inner {
+      display: block;
+      border-radius: 50%;
+      background: var(--color-text);
+      transition: width 0.15s, height 0.15s, background 0.15s, border 0.15s;
+    }
+    .brush-size-value {
+      color: var(--color-accent);
+      font-size: 14px;
+      margin-left: 6px;
+      font-family: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      vertical-align: middle;
+    }
+
+    /* Remove .tools-row-inner and .color-picker-topright styles */
+    .tools-row-toolbar {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+    }
+    .tools-btn-group-centered {
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .color-picker-btn-group {
+      display: flex;
+      align-items: center;
+      margin-left: 18px;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: auto;
+    }
+    .color-picker-btn-group #colorPicker.tool-btn {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      max-width: 36px;
+      max-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-primary);
+      margin-right: 0;
+      padding: 0;
+      cursor: pointer;
+      font-size: 0; /* Hide text, but keep swatch visible */
+      box-shadow: none;
+      outline: none;
+    }
+    #colorPicker.tool-btn[type="text"][data-coloris]:hover, #colorPicker.tool-btn[type="text"][data-coloris]:focus {
+      background: var(--color-border);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent, #E0B1CB);
+    }
+
+    .canvas-send-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
   </style>
 </head>
 <body>
@@ -595,6 +890,7 @@
     <div class="about-section" id="tabContent"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/coloris@0.23.1/dist/coloris.min.js"></script>
   <script>
     const tabs = [
       {
@@ -603,51 +899,57 @@
         content: `
           <h1 style="text-align: center">Leave a drawing or message!</h1>
           <div class="drawing-container">
-            <div class="tools-row">
-              <button class="tool-btn" id="pixelBtn" title="Toggle Pixel Art Mode">
-                <i class="fas fa-th"></i>
-              </button>
-              <button class="tool-btn active" id="brushBtn" title="Brush Tool">
-                <i class="fas fa-paint-brush"></i>
-              </button>
-              <button class="tool-btn" id="eraserBtn" title="Eraser">
-                <i class="fas fa-eraser"></i>
-              </button>
-              <button class="tool-btn" id="fillBtn" title="Fill Tool">
-                <i class="fas fa-fill-drip"></i>
-              </button>
-              <button class="icon-btn" id="undoBtn" title="Undo">
-                <i class="fas fa-undo"></i>
-              </button>
-              <button class="icon-btn" id="redoBtn" title="Redo">
-                <i class="fas fa-redo"></i>
-              </button>
-              <button class="icon-btn" id="clearBtn" title="Clear Canvas">
-                <i class="fas fa-trash-alt"></i>
-              </button>
+            <div class="tools-row tools-row-toolbar">
+              <div class="tools-btn-group tools-btn-group-centered">
+                <button class="tool-btn" id="pixelBtn" title="Toggle Pixel Art Mode">
+                  <i class="fas fa-th"></i>
+                </button>
+                <button class="tool-btn active" id="brushBtn" title="Brush Tool">
+                  <i class="fas fa-paint-brush"></i>
+                </button>
+                <button class="tool-btn" id="eraserBtn" title="Eraser">
+                  <i class="fas fa-eraser"></i>
+                </button>
+                <button class="tool-btn" id="fillBtn" title="Fill Tool">
+                  <i class="fas fa-fill-drip"></i>
+                </button>
+                <button class="tool-btn" id="eyedropperBtn" title="Eyedropper Tool">
+                  <i class="fas fa-eyedropper"></i>
+                </button>
+                <button class="icon-btn" id="undoBtn" title="Undo">
+                  <i class="fas fa-undo"></i>
+                </button>
+                <button class="icon-btn" id="redoBtn" title="Redo">
+                  <i class="fas fa-redo"></i>
+                </button>
+                <button class="icon-btn" id="clearBtn" title="Clear Canvas">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+              <div class="color-picker-btn-group">
+                <input type="text" id="colorPicker" class="tool-btn" data-coloris value="#000000" title="Color Picker" />
+              </div>
             </div>
             <div style="position: relative; width: 500px; height: 400px;">
               <canvas id="drawingCanvas" width="500" height="400"></canvas>
               <canvas id="gridCanvas" width="500" height="400" style="position: absolute; top: 0; left: 0; pointer-events: none; display: none;"></canvas>
             </div>
-          </div>
-          <div class="canvas-controls">
-            <div class="canvas-tool-group">
-              <input type="color" id="colorPicker" value="#000000" title="Choose Color">
-              <div class="brush-controls">
+            <div class="canvas-footer">
+              <div class="brush-footer-center">
+                <label for="brushSize" class="brush-label">Brush</label>
                 <input type="range" id="brushSize" min="1" max="50" value="5" title="Brush Size">
-                <span id="brushSizeDisplay">5px</span>
+                <span class="brush-size-value" id="brushSizeValue"></span>
               </div>
             </div>
-            <div class="canvas-send-group">
-              <input 
-                type="text" 
-                class="doodle-signature" 
-                id="doodleSignature" 
-                placeholder="Sign your doodle (optional)"
-              >
-              <button class="control-btn" id="sendBtn">Send Doodle!</button>
-            </div>
+          </div>
+          <div class="canvas-send-group">
+            <button class="control-btn" id="sendBtn">Send Doodle!</button>
+            <input 
+              type="text" 
+              class="doodle-signature" 
+              id="doodleSignature" 
+              placeholder="Sign your doodle (optional)"
+            >
           </div>
           <div class="message-container">
             <div class="message-box">
@@ -832,47 +1134,21 @@
       const brushSize = document.getElementById('brushSize');
       const brushControlsDiv = brushSize ? brushSize.closest('.brush-controls') : null;
 
-      sendBtn.addEventListener('click', async () => {
-        if (!signaturePrompted) {
-          signaturePrompted = true;
-          doodleSignature.style.display = 'inline-block';
-          sendBtn.textContent = 'Send Now';
-          return;
-        }
-        sendBtn.disabled = true;
-        sendBtn.textContent = 'Sending...';
-        const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
-        try {
-          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-          if (!blob) throw new Error('Blob creation failed');
-          const formData = new FormData();
-          formData.append('file', blob, 'doodle.png');
-          const signatureValue = doodleSignature.value.trim();
-          if (signatureValue) {
-            formData.append('content', `**Doodle by:** ${signatureValue}`);
-          }
-          const response = await fetch(webhookUrl, { method: 'POST', body: formData });
-          if (!response.ok) throw new Error('Failed to send');
-          sendBtn.textContent = 'Doodle Sent!';
-        } catch (error) {
-          console.error('Error sending doodle:', error);
-          sendBtn.textContent = 'Error Sending';
-        } finally {
-          setTimeout(() => {
-            sendBtn.disabled = false;
-            sendBtn.textContent = 'Send Doodle!';
-            doodleSignature.style.display = 'none';
-            doodleSignature.value = '';
-            signaturePrompted = false;
-          }, 5000);
-        }
-      });
-      
+      // Coloris integration
+      let currentColor = document.getElementById('colorPicker')?.value || '#000000';
+      const colorInput = document.getElementById('colorPicker');
+      if (colorInput) {
+        colorInput.addEventListener('input', function() {
+          currentColor = colorInput.value;
+          updateContextSettings();
+        });
+      }
+      function setColorFromHex(hex) {
+        currentColor = hex;
+        if (colorInput) colorInput.value = hex;
+        updateContextSettings();
+      }
 
-
-      const colorPicker = document.getElementById('colorPicker');
-
-      
       const state = {
         isDrawing: false,
         tool: 'brush',
@@ -892,19 +1168,18 @@
       
 
       function updateContextSettings() {
-          const selectedColor = colorPicker ? colorPicker.value : '#000000';
-          const currentBrushSize = brushSize ? brushSize.value : 5;
-
-          if (state.tool === 'eraser') {
-              ctx.strokeStyle = '#FFFFFF';
-              ctx.fillStyle = '#FFFFFF'; // Ensure fillStyle is set for eraser in pixel mode
-          } else {
-              ctx.strokeStyle = selectedColor;
-              ctx.fillStyle = selectedColor; // Ensure fillStyle is set for brush/fill in pixel mode
-          }
-          ctx.lineWidth = currentBrushSize;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
+        const selectedColor = currentColor;
+        const currentBrushSize = brushSize ? brushSize.value : 5;
+        if (state.tool === 'eraser') {
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.fillStyle = '#FFFFFF';
+        } else {
+          ctx.strokeStyle = selectedColor;
+          ctx.fillStyle = selectedColor;
+        }
+        ctx.lineWidth = currentBrushSize;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
       }
 
 
@@ -969,7 +1244,7 @@
 
         // Hide/show brush size controls based on pixel mode AND fill tool state
         if (brushControlsDiv) {
-            const shouldHide = pixelMode || state.tool === 'fill'; // Hide if pixel mode OR fill tool is active
+            const shouldHide = pixelMode || state.tool === 'fill' || state.tool === 'eyedropper';
             const newDisplay = shouldHide ? 'none' : 'block';
             console.log(`Pixel Toggle: Setting brushControlsDiv display to: ${newDisplay} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
             brushControlsDiv.style.display = newDisplay;
@@ -995,19 +1270,19 @@
 
       function updateCursorStyle() {
           if (!canvas) return;
-          let cursorStyle = 'crosshair'; // Default
-
+          let cursorStyle = 'crosshair';
           if (pixelMode) {
               cursorStyle = 'cell';
           } else if (state.tool === 'fill') {
                cursorStyle = 'copy';
           } else if (state.tool === 'eraser') {
                cursorStyle = 'crosshair';
+          } else if (state.tool === 'eyedropper') {
+               cursorStyle = 'copy';
           } else {
               cursorStyle = 'crosshair';
           }
           canvas.style.cursor = cursorStyle;
-          
       }
 
 
@@ -1148,7 +1423,10 @@
       function startDrawing(e) {
         const coords = getCoordinates(e);
         if (isNaN(coords.x) || isNaN(coords.y)) return;
-
+        if (state.tool === 'eyedropper') {
+          pickColorAt(coords.x, coords.y);
+          return;
+        }
         state.isDrawing = true;
         [state.lastX, state.lastY] = [coords.x, coords.y];
         state.lastSnappedX = -1; // Reset snap state
@@ -1217,7 +1495,10 @@
         e.preventDefault();
         const coords = getTouchCoordinates(e);
         if (isNaN(coords.x) || isNaN(coords.y)) return;
-
+        if (state.tool === 'eyedropper') {
+          pickColorAt(coords.x, coords.y);
+          return;
+        }
         state.isDrawing = true;
         [state.lastX, state.lastY] = [coords.x, coords.y];
         state.lastSnappedX = -1;
@@ -1301,26 +1582,21 @@
       const toolBtns = {
         brush: document.getElementById('brushBtn'),
         eraser: document.getElementById('eraserBtn'),
-        fill: document.getElementById('fillBtn')
+        fill: document.getElementById('fillBtn'),
+        eyedropper: document.getElementById('eyedropperBtn')
       };
       Object.entries(toolBtns).forEach(([tool, btn]) => {
         if (!btn) return;
         btn.addEventListener('click', () => {
-          // console.log('Tool selected:', tool); // Uncomment for tool logging
           Object.values(toolBtns).forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           state.tool = tool;
           updateContextSettings();
           updateCursorStyle();
-           // Update brush controls visibility based on tool AND pixel mode
-           if (brushControlsDiv) {
-                const shouldHide = pixelMode || state.tool === 'fill'; // Hide if pixel mode OR fill tool is active
-                const newDisplay = shouldHide ? 'none' : 'block';
-                console.log(`Tool Click (${tool}): Setting brushControlsDiv display to: ${newDisplay} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
-                brushControlsDiv.style.display = newDisplay;
-            } else {
-                 console.warn(`Tool click (${tool}): brushControlsDiv not found.`);
-            }
+          if (brushControlsDiv) {
+            const shouldHide = pixelMode || state.tool === 'fill' || state.tool === 'eyedropper';
+            brushControlsDiv.style.display = shouldHide ? 'none' : 'block';
+          }
         });
       });
 
@@ -1334,14 +1610,13 @@
 
       if (undoBtn) undoBtn.addEventListener('click', undo);
       if (redoBtn) redoBtn.addEventListener('click', redo);
-      if (colorPicker) colorPicker.addEventListener('input', updateContextSettings);
       if (brushSize) {
         brushSize.addEventListener('input', e => {
           if (!pixelMode) { // Only update if slider is visible/enabled
               updateContextSettings();
           }
-          const brushDisplay = document.getElementById('brushSizeDisplay');
-          if (brushDisplay) brushDisplay.textContent = `${e.target.value}px`;
+          const brushSizeValue = document.getElementById('brushSizeValue');
+          if (brushSizeValue) brushSizeValue.textContent = `${e.target.value}px`;
         });
       }
       if (clearBtn) {
@@ -1358,13 +1633,58 @@
       updateUndoRedoButtons();
       // Ensure initial brush control visibility is correct
       if (brushControlsDiv) {
-           const initialHide = pixelMode || state.tool === 'fill'; // Check initial state
+           const initialHide = pixelMode || state.tool === 'fill' || state.tool === 'eyedropper'; // Check initial state
            brushControlsDiv.style.display = initialHide ? 'none' : 'block';
            console.log(`Initial: Setting brushControlsDiv display to: ${initialHide ? 'none' : 'block'} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
       } else {
            console.warn('Initial: brushControlsDiv not found.');
       }
 
+      function pickColorAt(x, y) {
+        // Clamp coordinates
+        x = Math.max(0, Math.min(Math.floor(x), canvas.width - 1));
+        y = Math.max(0, Math.min(Math.floor(y), canvas.height - 1));
+        const imageData = ctx.getImageData(x, y, 1, 1).data;
+        const rgbToHex = (r, g, b) => '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+        const hex = rgbToHex(imageData[0], imageData[1], imageData[2]);
+        setColorFromHex(hex);
+        // Switch back to brush tool after picking
+        if (toolBtns && toolBtns.brush) toolBtns.brush.click();
+      }
+
+      // Brush size live preview
+      const brushSizeValue = document.getElementById('brushSizeValue');
+      function updateBrushPreview() {
+        if (brushSizeValue && brushSize) {
+          brushSizeValue.textContent = `${brushSize.value}px`;
+        }
+      }
+      if (brushSize) {
+        brushSize.addEventListener('input', updateBrushPreview);
+        setTimeout(updateBrushPreview, 100);
+      }
+      if (toolBtns && toolBtns.eraser) toolBtns.eraser.addEventListener('click', updateBrushPreview);
+      if (toolBtns && toolBtns.brush) toolBtns.brush.addEventListener('click', updateBrushPreview);
+
+      // Hide brush sizer in pixel mode
+      function updateBrushSizerVisibility() {
+        const brushFooter = document.querySelector('.canvas-footer');
+        if (!brushFooter) return;
+        if (pixelMode) {
+          brushFooter.style.display = 'none';
+        } else {
+          brushFooter.style.display = '';
+        }
+      }
+      // Pixel mode toggle already exists, so hook into it:
+      const originalTogglePixelMode = togglePixelMode;
+      function newTogglePixelMode() {
+        originalTogglePixelMode();
+        updateBrushSizerVisibility();
+      }
+      togglePixelMode = newTogglePixelMode;
+      // Also update on load
+      updateBrushSizerVisibility();
 
       return { canvas, ctx };
     } // End of initDrawingCanvas
@@ -1388,7 +1708,7 @@
         sendMessageBtn.disabled = true;
         sendMessageBtn.textContent = 'Sending...';
         try {
-          const webhookUrl = 'https://discord.com/api/webhooks/1325711944077807627/YkT0v182B_7DBRoPzhld0_JeGEHwrvqoF69SJu_wh8yYTrPvzo-TBPbpS8NC9CLobWZe';
+          const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
           const timeStamp = new Date().toLocaleTimeString('en-US', {
             hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/New_York'
           });
@@ -1424,6 +1744,51 @@
       });
     }
 
+    function initializeSendDoodleButton() {
+      const sendBtn = document.getElementById('sendBtn');
+      const doodleSignature = document.getElementById('doodleSignature');
+      let signaturePrompted = false;
+      const canvas = document.getElementById('drawingCanvas');
+      if (!sendBtn || !doodleSignature || !canvas) return;
+      doodleSignature.classList.remove('doodle-signature-visible');
+      sendBtn.onclick = async () => {
+        if (!signaturePrompted) {
+          signaturePrompted = true;
+          doodleSignature.classList.add('doodle-signature-visible');
+          sendBtn.textContent = 'Send Now';
+          doodleSignature.focus();
+          return;
+        }
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Sending...';
+        const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
+        try {
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          if (!blob) throw new Error('Blob creation failed');
+          const formData = new FormData();
+          formData.append('file', blob, 'doodle.png');
+          const signatureValue = doodleSignature.value.trim();
+          if (signatureValue) {
+            formData.append('content', `**Doodle by:** ${signatureValue}`);
+          }
+          const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+          if (!response.ok) throw new Error('Failed to send');
+          sendBtn.textContent = 'Doodle Sent!';
+        } catch (error) {
+          console.error('Error sending doodle:', error);
+          sendBtn.textContent = 'Error Sending';
+        } finally {
+          setTimeout(() => {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send Doodle!';
+            doodleSignature.classList.remove('doodle-signature-visible');
+            doodleSignature.value = '';
+            signaturePrompted = false;
+          }, 5000);
+        }
+      };
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const tabList = document.getElementById('tabList');
       const tabContent = document.getElementById('tabContent');
@@ -1452,7 +1817,12 @@
               currentCanvas = canvasSetup.canvas;
               currentContext = canvasSetup.ctx;
             }
+            initializeSendDoodleButton();
             initializeMessageBox();
+            // Re-initialize Coloris for dynamically added input
+            if (window.Coloris) {
+              Coloris.setInstance(document.querySelectorAll('[data-coloris]'));
+            }
           }, 100);
         }
       }
@@ -1543,6 +1913,17 @@
         }
       });
     }
+
+    initKeyboardShortcuts();
+
+    Coloris({
+      theme: 'large',
+      swatches: [
+        '#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff',
+        '#ffff00', '#ff00ff', '#00ffff', '#808080', '#c0c0c0',
+        '#be95c4', '#e0b1cb', '#9f86c0', '#231942', '#5e548e'
+      ]
+    });
   </script>
 </body>
 </html>
