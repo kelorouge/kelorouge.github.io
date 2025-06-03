@@ -7,8 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
-  <link rel="stylesheet" href="https://unpkg.com/coloris@0.23.1/dist/coloris.min.css"/>
+  <link rel="stylesheet" href="./coloris/coloris.min.css"/>
   <style>
     :root {
       --color-primary: #231942;
@@ -172,6 +171,7 @@
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      padding-bottom: 20px;
     }
 	
 	
@@ -225,6 +225,8 @@
       box-shadow: none;
     }
     #colorPicker.tool-btn {
+      position: relative;
+      overflow: hidden;
       min-width: 44px;
       min-height: 44px;
       width: 44px;
@@ -255,13 +257,11 @@
       position: relative;
     }
     #colorPicker.tool-btn:hover, #colorPicker.tool-btn:focus {
-      background: var(--color-border);
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 2px var(--color-accent, #E0B1CB);
-    }
-    .pickr .pcr-app {
-      border-radius: 10px !important;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18) !important;
+      transform: none !important;
+      background-color: var(--color-primary) !important;
+      border-color: var(--color-border) !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.07) !important;
+      outline: none !important;
     }
     .brush-size-group {
       display: flex;
@@ -590,48 +590,46 @@
     .fridge-gallery {
       display: flex;
       flex-wrap: wrap;
-      gap: 25px; /* Spacing between doodles */
+      gap: 25px;
       padding: 20px;
-      justify-content: center; /* Center doodles horizontally */
-      background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter background */
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
       margin-top: 20px;
     }
 
     .fridge-doodle {
-      position: relative; /* Needed for the pseudo-element magnet */
-      background-color: #ffffff; /* White paper background */
-      padding: 8px; /* Padding around the image */
-      border: 1px solid #ccc; /* Light border for the paper */
-      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2); /* Drop shadow */
-      max-width: 200px; /* Max width for each doodle container */
+      position: relative;
+      background-color: #ffffff;
+      padding: 8px;
+      border: 1px solid #ccc;
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+      max-width: 200px;
       transition: transform 0.2s ease-in-out;
-      /* Optional: slight random rotation for realism */
-      /* transform: rotate(calc(random() * 6deg - 3deg)); /* Needs browser support or JS */ 
     }
 
     .fridge-doodle:hover {
-        transform: scale(1.05); /* Slight zoom on hover */
+        transform: scale(1.05);
     }
 
     .fridge-doodle img {
-      display: block; /* Remove extra space below image */
-      max-width: 100%; /* Ensure image fits within the padding */
-      height: auto; /* Maintain aspect ratio */
+      display: block;
+      max-width: 100%;
+      height: auto;
     }
 
     /* Pseudo-element for the 'magnet' */
     .fridge-doodle::before {
       content: '';
       position: absolute;
-      top: -10px; /* Position above the doodle */
-      left: calc(50% - 12px); /* Center the magnet */
+      top: -10px;
+      left: calc(50% - 12px);
       width: 24px;
       height: 24px;
-      background-color: #E74C3C; /* Red magnet color, adjust as needed */
-      border-radius: 50%; /* Make it round */
-      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Magnet shadow */
-      border: 2px solid #C0392B; /* Darker border for magnet */
+      background-color: #E74C3C;
+      border-radius: 50%;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+      border: 2px solid #C0392B;
     }
 
     .color-picker-topright {
@@ -679,7 +677,7 @@
       }
     }
 
-    .tools-row.tools-row-centered {
+    .tools-row.tools-row-toolbar {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -687,62 +685,38 @@
       width: 100%;
       position: relative;
     }
-    .tools-btn-group {
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto;
-    }
     .tools-btn-group-centered {
-      flex: 1 1 auto;
+      flex: 1;
+      display: flex;
       justify-content: center;
+      gap: 10px;
+      margin: 0;
     }
     .color-picker-btn-group {
       display: flex;
       align-items: center;
-      margin-left: 18px;
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
       height: auto;
+      margin-left: auto;
+      margin-right: 0;
+      flex-shrink: 0;
     }
     .color-picker-btn-group #colorPicker.tool-btn {
-      min-width: 48px;
-      min-height: 48px;
-      width: 48px;
-      height: 48px;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      max-width: 36px;
+      max-height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: none;
-      margin-right: 0;
-      transition: background 0.2s, border 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-      outline: none;
       border: 2px solid var(--color-border);
       border-radius: 6px;
       background: var(--color-primary);
-    }
-    .color-picker-btn-group #colorPicker.tool-btn .pcr-button {
-      width: 32px !important;
-      height: 32px !important;
-      border-radius: 4px !important;
-      box-shadow: 0 0 0 3px var(--color-border) !important;
-      box-sizing: border-box !important;
-      margin: 0 auto !important;
-      display: block !important;
-      position: relative;
-      top: 0;
-      left: 0;
-      background-clip: padding-box !important;
-    }
-    .color-picker-btn-group #colorPicker.tool-btn:hover, .color-picker-btn-group #colorPicker.tool-btn:focus {
-      background: var(--color-border);
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 2px var(--color-accent, #E0B1CB);
+      margin-right: 0;
+      padding: 0;
+      cursor: pointer;
+      font-size: 0;
     }
     .brush-footer-center {
       display: flex;
@@ -783,64 +757,37 @@
       vertical-align: middle;
     }
 
-    /* Remove .tools-row-inner and .color-picker-topright styles */
-    .tools-row-toolbar {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
+    #colorSwatchPreview {
       width: 100%;
-      position: relative;
-    }
-    .tools-btn-group-centered {
-      flex: 1 1 auto;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    .color-picker-btn-group {
-      display: flex;
-      align-items: center;
-      margin-left: 18px;
+      height: 100%;
+      border-radius: 4px;
+      background-color: #000000;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 2px var(--color-border);
       position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      height: auto;
+      top: 0;
+      left: 0;
+      z-index: 1;
     }
-    .color-picker-btn-group #colorPicker.tool-btn {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      min-height: 36px;
-      max-width: 36px;
-      max-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--color-border);
-      border-radius: 6px;
-      background: var(--color-primary);
-      margin-right: 0;
-      padding: 0;
-      cursor: pointer;
-      font-size: 0; /* Hide text, but keep swatch visible */
-      box-shadow: none;
-      outline: none;
+
+    #colorPicker.tool-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 0 !important;
     }
-    #colorPicker.tool-btn[type="text"][data-coloris]:hover, #colorPicker.tool-btn[type="text"][data-coloris]:focus {
-      background: var(--color-border);
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 2px var(--color-accent, #E0B1CB);
+
+    /* Ensure no hover effects on color picker */
+    #colorPicker.tool-btn:hover,
+    #colorPicker.tool-btn:focus {
+        transform: none !important;
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-border) !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.07) !important;
+        outline: none !important;
     }
 
     .canvas-send-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 32px;
+       margin-top: 20px;
     }
 
   </style>
@@ -890,7 +837,7 @@
     <div class="about-section" id="tabContent"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/coloris@0.23.1/dist/coloris.min.js"></script>
+  <script src="./coloris/coloris.min.js"></script>
   <script>
     const tabs = [
       {
@@ -942,7 +889,7 @@
               </div>
             </div>
           </div>
-          <div class="canvas-send-group">
+          <div class="canvas-send-group" style="margin-top: 20px;">
             <button class="control-btn" id="sendBtn">Send Doodle!</button>
             <input 
               type="text" 
@@ -1119,12 +1066,12 @@
       const canvas = document.getElementById('drawingCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false; 
-	  const gridCanvas = document.getElementById('gridCanvas'); 
-      const gtx = gridCanvas ? gridCanvas.getContext('2d') : null; 
+      ctx.imageSmoothingEnabled = false;
+	  const gridCanvas = document.getElementById('gridCanvas');
+      const gtx = gridCanvas ? gridCanvas.getContext('2d') : null;
 
 
-	  let pixelMode = false; // Re-enable pixel mode flag
+	  let pixelMode = false; 
 
       const sendBtn = document.getElementById('sendBtn');
       const doodleSignature = document.getElementById('doodleSignature');
@@ -1137,10 +1084,35 @@
       // Coloris integration
       let currentColor = document.getElementById('colorPicker')?.value || '#000000';
       const colorInput = document.getElementById('colorPicker');
+      
+const colorSwatch = document.createElement('div');
+colorSwatch.id = 'colorSwatchPreview';
+if (colorInput && colorInput.parentElement) {
+  colorInput.parentElement.style.position = 'relative'; 
+  colorInput.parentElement.appendChild(colorSwatch);
+}
+
+// Update function
+function updateColorSwatch(hex) {
+  colorSwatch.style.backgroundColor = hex;
+}
+
+// Initial update
+updateColorSwatch(currentColor);
+
+// Update swatch on color change (for the eyedropper tool)
+colorInput.addEventListener('input', function() {
+  currentColor = colorInput.value;
+  updateContextSettings();
+  updateColorSwatch(currentColor);
+});
+
+
       if (colorInput) {
         colorInput.addEventListener('input', function() {
           currentColor = colorInput.value;
           updateContextSettings();
+          updateColorSwatch(currentColor);
         });
       }
       function setColorFromHex(hex) {
@@ -1154,14 +1126,14 @@
         tool: 'brush',
         lastX: 0,
         lastY: 0,
-        lastSnappedX: -1, 
-        lastSnappedY: -1, 
+        lastSnappedX: -1,
+        lastSnappedY: -1,
         undoStack: [],
         redoStack: [],
         maxStates: 50
       };
 
-      const pixelSize = 20; 
+      const pixelSize = 20;
 
       const canvasBorderSize = 3; // Define the border size from CSS
 
@@ -1183,30 +1155,28 @@
       }
 
 
-      function drawGrid() { // Revised grid drawing function
-          if (!gtx || !gridCanvas) return; // Guard clause
+      function drawGrid() { 
+          if (!gtx || !gridCanvas) return;
 
-          const width = gridCanvas.width; // Use canvas intrinsic width/height
+          const width = gridCanvas.width;
           const height = gridCanvas.height;
 
-          gtx.clearRect(0, 0, width, height); // Clear the entire grid canvas
-          gtx.save(); // Save context state
+          gtx.clearRect(0, 0, width, height);
+          gtx.save();
 
-          // Translate the grid context origin to align with the drawing canvas's content area top-left
+          
           gtx.translate(canvasBorderSize, canvasBorderSize);
 
           gtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-          gtx.lineWidth = 0.5; // Keep thin lines
+          gtx.lineWidth = 0.5;
 
           
           const effectiveWidth = width - canvasBorderSize * 2;
           const effectiveHeight = height - canvasBorderSize * 2;
 
-          // Draw vertical lines relative to the translated origin
-          // Start from the first grid line position (pixelSize) up to the effective width
+          
           for (let x = pixelSize; x < effectiveWidth; x += pixelSize) {
             gtx.beginPath();
-            // Draw line from (x - 0.5, 0) to (x - 0.5, effectiveHeight) in the translated coordinate space
             gtx.moveTo(x - 0.5, 0);
             gtx.lineTo(x - 0.5, effectiveHeight);
             gtx.stroke();
@@ -1215,13 +1185,13 @@
           
           for (let y = pixelSize; y < effectiveHeight; y += pixelSize) {
             gtx.beginPath();
-           
+
             gtx.moveTo(0, y - 0.5);
             gtx.lineTo(effectiveWidth, y - 0.5);
             gtx.stroke();
           }
 
-          gtx.restore(); 
+          gtx.restore();
       }
 
       function updateUndoRedoButtons() {
@@ -1242,7 +1212,7 @@
         console.log('Toggling Pixel Mode. New state:', pixelMode); // Log mode toggle
         ctx.imageSmoothingEnabled = !pixelMode;
 
-        // Hide/show brush size controls based on pixel mode AND fill tool state
+        // Hide/show brush size controls based on pixel mode
         if (brushControlsDiv) {
             const shouldHide = pixelMode || state.tool === 'fill' || state.tool === 'eyedropper';
             const newDisplay = shouldHide ? 'none' : 'block';
@@ -1291,8 +1261,8 @@
           state.undoStack.shift();
         }
         state.undoStack.push(canvas.toDataURL());
-        state.redoStack = []; 
-        updateUndoRedoButtons(); 
+        state.redoStack = [];
+        updateUndoRedoButtons();
       }
 
       function restoreState(url) {
@@ -1308,7 +1278,7 @@
         if (state.undoStack.length > 1) {
           state.redoStack.push(state.undoStack.pop());
           restoreState(state.undoStack[state.undoStack.length - 1]);
-          updateUndoRedoButtons(); 
+          updateUndoRedoButtons();
         }
       }
 
@@ -1317,14 +1287,14 @@
           const nextState = state.redoStack.pop();
           state.undoStack.push(nextState);
           restoreState(nextState);
-          updateUndoRedoButtons(); 
+          updateUndoRedoButtons();
         }
       }
 
       // --- Flood Fill (Keep, but maybe test separately later??) ---
-       function floodFill(x, y) { 
-            updateContextSettings(); 
-            const fillColor = ctx.fillStyle; 
+       function floodFill(x, y) {
+            updateContextSettings();
+            const fillColor = ctx.fillStyle;
             if (!/^#[0-9A-F]{6}$/i.test(fillColor)) return;
 
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -1429,7 +1399,7 @@
         }
         state.isDrawing = true;
         [state.lastX, state.lastY] = [coords.x, coords.y];
-        state.lastSnappedX = -1; // Reset snap state
+        state.lastSnappedX = -1;
         state.lastSnappedY = -1;
 
         updateContextSettings();
@@ -1438,10 +1408,10 @@
           floodFill(coords.x, coords.y);
           saveState();
           state.isDrawing = false;
-        } else if (pixelMode) { // Re-add pixel mode logic
+        } else if (pixelMode) {
           const x = Math.floor(coords.x / pixelSize) * pixelSize;
           const y = Math.floor(coords.y / pixelSize) * pixelSize;
-          ctx.fillRect(x, y, pixelSize, pixelSize); // Draw first pixel block
+          ctx.fillRect(x, y, pixelSize, pixelSize);
           state.lastSnappedX = x;
           state.lastSnappedY = y;
           // Don't save state until stopDrawing this was really annoying..
@@ -1457,21 +1427,21 @@
         const coords = getCoordinates(e);
          if (isNaN(coords.x) || isNaN(coords.y)) return;
 
-        if (pixelMode) { // Re-add pixel mode logic
+        if (pixelMode) {
             if (state.tool !== 'fill') {
                 const x = Math.floor(coords.x / pixelSize) * pixelSize;
                 const y = Math.floor(coords.y / pixelSize) * pixelSize;
                 // Only draw if snapped position changes
                 if (x !== state.lastSnappedX || y !== state.lastSnappedY) {
-                    updateContextSettings(); // Ensure fillStyle is current
+                    updateContextSettings();
                     ctx.fillRect(x, y, pixelSize, pixelSize);
                     state.lastSnappedX = x;
                     state.lastSnappedY = y;
                 }
             }
-         } else { // Standard brush/eraser drawing
+         } else {
              if (state.tool !== 'fill') {
-                 updateContextSettings(); // Ensure settings are current
+                 updateContextSettings();
                  ctx.lineTo(coords.x, coords.y);
                  ctx.stroke();
                  [state.lastX, state.lastY] = [coords.x, coords.y];
@@ -1489,7 +1459,7 @@
       }
 
 
-      // --- Touch Handlers (Re-integrate Pixel Mode) ---
+      // --- Touch Handlers ---
 
        function startDrawingTouch(e) {
         e.preventDefault();
@@ -1510,7 +1480,7 @@
           floodFill(coords.x, coords.y);
           saveState();
           state.isDrawing = false;
-        } else if (pixelMode) { // Re-add pixel mode logic
+        } else if (pixelMode) {
           const x = Math.floor(coords.x / pixelSize) * pixelSize;
           const y = Math.floor(coords.y / pixelSize) * pixelSize;
           ctx.fillRect(x, y, pixelSize, pixelSize);
@@ -1528,7 +1498,7 @@
         const coords = getTouchCoordinates(e);
          if (isNaN(coords.x) || isNaN(coords.y)) return;
 
-        if (pixelMode) { // Re-add pixel mode logic
+        if (pixelMode) {
             if (state.tool !== 'fill') {
                 const x = Math.floor(coords.x / pixelSize) * pixelSize;
                 const y = Math.floor(coords.y / pixelSize) * pixelSize;
@@ -1539,7 +1509,7 @@
                     state.lastSnappedY = y;
                 }
             }
-        } else { // Standard brush/eraser drawing
+        } else {
             if (state.tool !== 'fill') {
                 updateContextSettings();
                 ctx.lineTo(coords.x, coords.y);
@@ -1549,7 +1519,7 @@
         }
       }
 
-       function stopDrawingTouch(e) { // Unchanged from simplified version
+       function stopDrawingTouch(e) {
         e.preventDefault();
          if (state.isDrawing) {
             if (state.tool !== 'fill') {
@@ -1612,7 +1582,7 @@
       if (redoBtn) redoBtn.addEventListener('click', redo);
       if (brushSize) {
         brushSize.addEventListener('input', e => {
-          if (!pixelMode) { // Only update if slider is visible/enabled
+          if (!pixelMode) {
               updateContextSettings();
           }
           const brushSizeValue = document.getElementById('brushSizeValue');
@@ -1631,9 +1601,9 @@
       // --- Initial Save & Button State ---
       saveState();
       updateUndoRedoButtons();
-      // Ensure initial brush control visibility is correct
+      
       if (brushControlsDiv) {
-           const initialHide = pixelMode || state.tool === 'fill' || state.tool === 'eyedropper'; // Check initial state
+           const initialHide = pixelMode || state.tool === 'fill' || state.tool === 'eyedropper';
            brushControlsDiv.style.display = initialHide ? 'none' : 'block';
            console.log(`Initial: Setting brushControlsDiv display to: ${initialHide ? 'none' : 'block'} (pixelMode: ${pixelMode}, tool: ${state.tool})`);
       } else {
@@ -1648,6 +1618,7 @@
         const rgbToHex = (r, g, b) => '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
         const hex = rgbToHex(imageData[0], imageData[1], imageData[2]);
         setColorFromHex(hex);
+        updateColorSwatch(hex);
         // Switch back to brush tool after picking
         if (toolBtns && toolBtns.brush) toolBtns.brush.click();
       }
@@ -1708,7 +1679,7 @@
         sendMessageBtn.disabled = true;
         sendMessageBtn.textContent = 'Sending...';
         try {
-          const webhookUrl = 'https://discord.com/api/webhooks/1324823445082607706/WFRr5qQlIf7584EYlb62BgPbzoq19nGKXfNrJncnHtMW1kXgsp6Hq_RUqqWu5AOyx3FZ';
+          const webhookUrl = 'https://discord.com/api/webhooks/1325711944077807627/YkT0v182B_7DBRoPzhld0_JeGEHwrvqoF69SJu_wh8yYTrPvzo-TBPbpS8NC9CLobWZe';
           const timeStamp = new Date().toLocaleTimeString('en-US', {
             hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/New_York'
           });
